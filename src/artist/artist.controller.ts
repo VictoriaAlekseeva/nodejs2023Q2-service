@@ -19,7 +19,7 @@ export class ArtistController {
   }
 
   @Get(':id')
-  findOne(@Param('id', new ParseUUIDPipe({version: '4'}))id: string) {
+  findOne(@Param('id', new ParseUUIDPipe({version: '4'})) id: string) {
     return this.artistService.findOne(id);
   }
 

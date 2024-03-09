@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UserEntity } from '../user/entities/user.entity';
-import { ArtistEntity } from 'src/artist/entities/artist.entity';
+import { ArtistEntity } from '../artist/entities/artist.entity';
+import { TrackEntity } from '../track/entities/track.entity';
 
 export const enum DbEntities {
   Users = 'users',
@@ -13,5 +14,5 @@ export const enum DbEntities {
 export class DbService {
   users: UserEntity[] = [];
   artists: ArtistEntity[] = [];
-
+  tracks: TrackEntity[] = [];
 }

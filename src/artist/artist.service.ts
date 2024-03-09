@@ -19,7 +19,7 @@ export class ArtistService {
       grammy,
     })
 
-    this.db.artists.push(artist)
+    this.db.artists.push(artist);
 
     return artist;
   }
@@ -48,20 +48,19 @@ export class ArtistService {
     artist.name = name;
     artist.grammy = grammy;
     return artist;
-    ;
   }
 
   remove(id: string) {
-    const artistIndex = this.db.artists.findIndex(artist => artist.id === id);
+    // const artistIndex = this.db.artists.findIndex(artist => artist.id === id);
 
-    if (artistIndex === -1) {
-      throw new HttpException("Artist doesn't exist", HttpStatus.NOT_FOUND);
-    }
+    // if (artistIndex === -1) {
+    //   throw new HttpException("Artist doesn't exist", HttpStatus.NOT_FOUND);
+    // }
 
-    this.db.users.splice(artistIndex, 1)
+    // this.db.users.splice(artistIndex, 1)
   }
 
   isArtistExists(param: 'id' | 'name', value: string) {
-    return this.db.artists.find(user => user[param] === value);
+    return this.db.artists.find(artist => artist[param] === value);
   }
 }
