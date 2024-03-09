@@ -16,6 +16,7 @@ export class UserService {
     if (this.isUserExists('login', login)) {
       throw new HttpException('Login is occupied', HttpStatus.CONFLICT);
     }
+
     const id = uuidv4();
     const currentDate = Date.now();
     const user = new UserEntity({
@@ -58,7 +59,8 @@ export class UserService {
     }
 
     user.password = newPassword;
-    user.version++;
+    user.updatedAt = Date.now();
+    user.version +=1;
     return user;
 
   }
