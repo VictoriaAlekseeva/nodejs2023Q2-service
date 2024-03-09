@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Param, Delete, UsePipes, ValidationPipe, ParseUUIDPipe, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, UsePipes, ValidationPipe, ParseUUIDPipe, UseInterceptors, ClassSerializerInterceptor, Put, HttpCode } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { StatusCodes } from 'http-status-codes';
 
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -26,7 +27,14 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
+  @Put(':id')
+  @UsePipes(new ValidationPipe())
+  update(@Param('id', new ParseUUIDPipe({version: '4'})) id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(id, updateUserDto);
+  }
+
   @Delete(':id')
+  @HttpCode(StatusCodes.NO_CONTENT)
   remove(@Param('id', new ParseUUIDPipe({version: '4'})) id: string) {
     return this.userService.remove(id);
   }

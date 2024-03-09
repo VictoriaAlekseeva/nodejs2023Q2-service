@@ -11,14 +11,17 @@ export class UserService {
 
   create(createUserDto: CreateUserDto) {
 
-    if (this.isUserExists('login', createUserDto.login)) {
+    const { login, password } = createUserDto;
+
+    if (this.isUserExists('login', login)) {
       throw new HttpException('Login is occupied', HttpStatus.CONFLICT);
     }
     const id = uuidv4();
     const currentDate = Date.now();
     const user = new UserEntity({
       id,
-      ...createUserDto,
+      login,
+      password,
       version: 1,
       createdAt: currentDate,
       updatedAt: currentDate
@@ -34,15 +37,40 @@ export class UserService {
   }
 
   findOne(id: string) {
-    return this.db.users.filter(user => user.id === id);
+    const user = this.isUserExists('id', id);
+    if (!user) {
+      throw new HttpException("User doesn't exists", HttpStatus.NOT_FOUND);
+    }
+    return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  update(id: string, updateUserDto: UpdateUserDto) {
+    const { oldPassword, newPassword } = updateUserDto;
+
+    const user = this.isUserExists('id', id);
+
+    if (!user) {
+      throw new HttpException("User doesn't exists", HttpStatus.NOT_FOUND);
+    }
+
+    if (user.password !== oldPassword) {
+      throw new HttpException("Incorrect password", HttpStatus.FORBIDDEN);
+    }
+
+    user.password = newPassword;
+    user.version++;
+    return user;
+
   }
 
   remove(id: string) {
-    return `This action removes a #${id} user`;
+    const userIndex = this.db.users.findIndex(user => user.id === id);
+
+    if (userIndex === -1) {
+      throw new HttpException("User doesn't exists", HttpStatus.NOT_FOUND);
+    }
+
+    this.db.users.splice(userIndex, 1)
   }
 
   isUserExists(param: 'id' | 'login', value: string) {
