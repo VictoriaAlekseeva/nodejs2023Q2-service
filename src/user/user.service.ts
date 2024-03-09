@@ -40,7 +40,7 @@ export class UserService {
   findOne(id: string) {
     const user = this.isUserExists('id', id);
     if (!user) {
-      throw new HttpException("User doesn't exists", HttpStatus.NOT_FOUND);
+      throw new HttpException("User doesn't exist", HttpStatus.NOT_FOUND);
     }
     return user;
   }
@@ -51,7 +51,7 @@ export class UserService {
     const user = this.isUserExists('id', id);
 
     if (!user) {
-      throw new HttpException("User doesn't exists", HttpStatus.NOT_FOUND);
+      throw new HttpException("User doesn't exist", HttpStatus.NOT_FOUND);
     }
 
     if (user.password !== oldPassword) {
@@ -69,7 +69,7 @@ export class UserService {
     const userIndex = this.db.users.findIndex(user => user.id === id);
 
     if (userIndex === -1) {
-      throw new HttpException("User doesn't exists", HttpStatus.NOT_FOUND);
+      throw new HttpException("User doesn't exist", HttpStatus.NOT_FOUND);
     }
 
     this.db.users.splice(userIndex, 1)
