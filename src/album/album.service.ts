@@ -1,26 +1,63 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
+import { v4 as uuidv4 } from 'uuid';
+import { DbService } from '../db/db.service';
+import { AlbumEntity } from './entities/album.entity';
 
 @Injectable()
 export class AlbumService {
+  constructor(private db: DbService) { }
+
   create(createAlbumDto: CreateAlbumDto) {
-    return 'This action adds a new album';
+    const { name, year, artistId } = createAlbumDto;
+
+    const id = uuidv4();
+    const album = new AlbumEntity({
+      id,
+      name,
+      year,
+      artistId,
+    })
+
+    this.db.albums.push(album);
+
+    return album;
   }
 
   findAll() {
-    return `This action returns all album`;
+    return this.db.albums;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} album`;
+  findOne(id: string) {
+    const album = this.isAlbumExists('id', id);
+    if (!album) {
+      throw new HttpException("Album doesn't exist", HttpStatus.NOT_FOUND);
+    }
+    return album;
   }
 
-  update(id: number, updateAlbumDto: UpdateAlbumDto) {
-    return `This action updates a #${id} album`;
+  update(id: string, updateAlbumDto: UpdateAlbumDto) {
+    const { name, year, artistId } = updateAlbumDto;
+
+    const album = this.isAlbumExists('id', id);
+
+    if (!album) {
+      throw new HttpException("Album doesn't exist", HttpStatus.NOT_FOUND);
+    }
+
+    album.name = name;
+    album.year = year;
+    album.artistId = artistId;
+    
+    return album;
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} album`;
+  }
+
+  isAlbumExists(param: 'id' | 'name', value: string) {
+    return this.db.albums.find(album => album[param] === value);
   }
 }
