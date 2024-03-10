@@ -49,12 +49,22 @@ export class AlbumService {
     album.name = name;
     album.year = year;
     album.artistId = artistId;
-    
+
     return album;
   }
 
   remove(id: string) {
-    return `This action removes a #${id} album`;
+    const albumIndex = this.db.albums.findIndex(album => album.id === id);
+
+    if (albumIndex === -1) {
+      throw new HttpException("Album doesn't exist", HttpStatus.NOT_FOUND);
+    }
+
+    this.db.tracks.map(track => {
+      if (track.albumId === id) track.albumId = null
+    })
+
+    this.db.albums.splice(albumIndex, 1);
   }
 
   isAlbumExists(param: 'id' | 'name', value: string) {

@@ -51,13 +51,22 @@ export class ArtistService {
   }
 
   remove(id: string) {
-    // const artistIndex = this.db.artists.findIndex(artist => artist.id === id);
+    const artistIndex = this.db.artists.findIndex(artist => artist.id === id);
 
-    // if (artistIndex === -1) {
-    //   throw new HttpException("Artist doesn't exist", HttpStatus.NOT_FOUND);
-    // }
+    if (artistIndex === -1) {
+      throw new HttpException("Artist doesn't exist", HttpStatus.NOT_FOUND);
+    }
 
-    // this.db.users.splice(artistIndex, 1)
+    this.db.tracks.map(track => {
+      if (track.artistId === id) track.artistId = null
+    })
+
+    this.db.albums.map(album => {
+      if (album.artistId === id) album.artistId = null
+    })
+
+    this.db.artists.splice(artistIndex, 1);
+
   }
 
   isArtistExists(param: 'id' | 'name', value: string) {
