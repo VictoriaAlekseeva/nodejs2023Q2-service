@@ -88,24 +88,11 @@ export class TrackService {
   }
 
   isArtistExists(id: string) {
-    // const artist = this.db.artists.find((artist) => artist.id === id);
-    // if (!artist) {
-    //   throw new HttpException("Artist doesn't exist", HttpStatus.NOT_FOUND);
-    // }
-
-    // return artist
 
     return this.db.artists.find((artist) => artist.id === id);
   }
 
   isAlbumExists(id: string) {
-    // const album = this.db.albums.find((album) => album.id === id)
-
-    // if (!album) {
-    //   throw new HttpException("Album doesn't exist", HttpStatus.NOT_FOUND);
-    // }
-
-    // return album
 
     return this.db.albums.find((album) => album.id === id);
   }

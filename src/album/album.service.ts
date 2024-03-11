@@ -12,6 +12,10 @@ export class AlbumService {
   create(createAlbumDto: CreateAlbumDto) {
     const { name, year, artistId } = createAlbumDto;
 
+    if (artistId && !this.isArtistExists(artistId)) {
+      throw new HttpException("Artist doesn't exist", HttpStatus.NOT_FOUND);
+    }
+
     const id = uuidv4();
     const album = new AlbumEntity({
       id,
@@ -41,6 +45,10 @@ export class AlbumService {
     const { name, year, artistId } = updateAlbumDto;
 
     const album = this.isAlbumExists('id', id);
+
+    if (artistId && !this.isArtistExists(artistId)) {
+      throw new HttpException("Artist doesn't exist", HttpStatus.NOT_FOUND);
+    }
 
     if (!album) {
       throw new HttpException("Album doesn't exist", HttpStatus.NOT_FOUND);
@@ -72,5 +80,10 @@ export class AlbumService {
 
   isAlbumExists(param: 'id' | 'name', value: string) {
     return this.db.albums.find((album) => album[param] === value);
+  }
+
+  isArtistExists(id: string) {
+
+    return this.db.artists.find((artist) => artist.id === id);
   }
 }
