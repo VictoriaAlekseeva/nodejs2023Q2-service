@@ -8,7 +8,7 @@
 ## Downloading
 
 ```
-git clone {repository URL}
+git clone https://github.com/VictoriaAlekseeva/nodejs2024Q1-service.git
 ```
 
 ## Installing NPM modules
@@ -16,6 +16,15 @@ git clone {repository URL}
 ```
 npm install
 ```
+
+## Checking the first assignment
+
+switch to the task branch
+
+```
+git checkout part-1
+```
+
 
 ## Running application
 
