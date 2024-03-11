@@ -9,6 +9,10 @@ import { readFile } from 'fs/promises';
 
 async function bootstrap() {
   dotenv.config();
+
+  const defaultPort = 4000;
+  const PORT = process.env.PORT || defaultPort;
+
   const app = await NestFactory.create(AppModule);
 
   const swaggerConfig = async () => {
@@ -25,6 +29,6 @@ async function bootstrap() {
   await setupSwagger(app);
 
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(process.env.PORT || 4000);
+  await app.listen(PORT, () => console.log(`Server in running on port ${PORT} `));
 }
 bootstrap();
