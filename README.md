@@ -28,6 +28,10 @@ git checkout part-1
 
 ## Running application
 
+Create a .env file in the project's root folder and set the port number there. The app will run on the specified port in the .env file or on port 4000 if the port is not specified.
+
+Then run command:
+
 ```
 npm start
 ```
