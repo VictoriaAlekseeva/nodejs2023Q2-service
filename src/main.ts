@@ -29,6 +29,8 @@ async function bootstrap() {
   await setupSwagger(app);
 
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(PORT, () => console.log(`Server in running on port ${PORT} `));
+  await app.listen(PORT, () =>
+    console.log(`Server in running on port ${PORT} `),
+  );
 }
 bootstrap();
