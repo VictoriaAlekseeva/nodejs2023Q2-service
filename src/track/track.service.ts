@@ -10,7 +10,15 @@ export class TrackService {
   constructor(private db: DbService) {}
 
   create(createTrackDto: CreateTrackDto) {
-    // const { name, artistId, albumId, duration } = createTrackDto;
+    const { name, artistId, albumId, duration } = createTrackDto;
+
+    if (artistId && !this.isArtistExists(artistId)) {
+      throw new HttpException("Artist doesn't exist", HttpStatus.NOT_FOUND);
+    }
+
+    if (albumId && !this.isAlbumExists(albumId)) {
+      throw new HttpException("Album doesn't exist", HttpStatus.NOT_FOUND);
+    }
 
     const id = uuidv4();
 
@@ -40,16 +48,24 @@ export class TrackService {
   update(id: string, updateTrackDto: UpdateTrackDto) {
     const { name, artistId, albumId, duration } = updateTrackDto;
 
-    const track = this.isTrackExists('id', id);
+    let track = this.isTrackExists('id', id);
 
     if (!track) {
       throw new HttpException("Artist doesn't exist", HttpStatus.NOT_FOUND);
     }
 
-    track.name = name;
-    track.artistId = artistId;
-    track.albumId = albumId;
-    track.duration = duration;
+    if (artistId && !this.isArtistExists(artistId)) {
+      throw new HttpException("Artist doesn't exist", HttpStatus.NOT_FOUND);
+    }
+
+    if (albumId && !this.isAlbumExists(albumId)) {
+      throw new HttpException("Album doesn't exist", HttpStatus.NOT_FOUND);
+    }
+
+    track = {
+      ...track,
+      ...updateTrackDto
+    };
 
     return track;
   }
@@ -69,5 +85,28 @@ export class TrackService {
 
   isTrackExists(param: 'id' | 'name', value: string) {
     return this.db.tracks.find((track) => track[param] === value);
+  }
+
+  isArtistExists(id: string) {
+    // const artist = this.db.artists.find((artist) => artist.id === id);
+    // if (!artist) {
+    //   throw new HttpException("Artist doesn't exist", HttpStatus.NOT_FOUND);
+    // }
+
+    // return artist
+
+    return this.db.artists.find((artist) => artist.id === id)
+  }
+
+  isAlbumExists(id: string) {
+    // const album = this.db.albums.find((album) => album.id === id)
+
+    // if (!album) {
+    //   throw new HttpException("Album doesn't exist", HttpStatus.NOT_FOUND);
+    // }
+
+    // return album
+
+    return this.db.albums.find((album) => album.id === id)
   }
 }
