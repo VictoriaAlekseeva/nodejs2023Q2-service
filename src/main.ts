@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { SwaggerModule } from '@nestjs/swagger';
 import * as dotenv from 'dotenv';
 import { resolve } from 'path';
 import { parse } from 'yamljs';
@@ -17,13 +17,12 @@ async function bootstrap() {
     return parse(yamlContents);
   };
 
-  const setupSwagger = async (app:  INestApplication) => {
+  const setupSwagger = async (app: INestApplication) => {
     const config = await swaggerConfig();
     SwaggerModule.setup('doc', app, config);
   };
 
-  await setupSwagger(app)
-
+  await setupSwagger(app);
 
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(process.env.PORT || 4000);

@@ -16,7 +16,7 @@ export class TrackEntity implements Track {
   constructor(trackData: Partial<TrackEntity>) {
     this.id = trackData.id;
     this.name = trackData.name;
-    this.artistId = trackData.artistId ? trackData.artistId : null ;
+    this.artistId = trackData.artistId ? trackData.artistId : null;
     this.albumId = trackData.albumId ? trackData.albumId : null;
     this.duration = trackData.duration;
   }

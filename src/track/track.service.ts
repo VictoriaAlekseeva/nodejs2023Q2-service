@@ -10,7 +10,7 @@ export class TrackService {
   constructor(private db: DbService) {}
 
   create(createTrackDto: CreateTrackDto) {
-    const { name, artistId, albumId, duration } = createTrackDto;
+    const { artistId, albumId } = createTrackDto;
 
     if (artistId && !this.isArtistExists(artistId)) {
       throw new HttpException("Artist doesn't exist", HttpStatus.NOT_FOUND);
@@ -46,7 +46,7 @@ export class TrackService {
   }
 
   update(id: string, updateTrackDto: UpdateTrackDto) {
-    const { name, artistId, albumId, duration } = updateTrackDto;
+    const { artistId, albumId } = updateTrackDto;
 
     let track = this.isTrackExists('id', id);
 
@@ -64,7 +64,7 @@ export class TrackService {
 
     track = {
       ...track,
-      ...updateTrackDto
+      ...updateTrackDto,
     };
 
     return track;
@@ -95,7 +95,7 @@ export class TrackService {
 
     // return artist
 
-    return this.db.artists.find((artist) => artist.id === id)
+    return this.db.artists.find((artist) => artist.id === id);
   }
 
   isAlbumExists(id: string) {
@@ -107,6 +107,6 @@ export class TrackService {
 
     // return album
 
-    return this.db.albums.find((album) => album.id === id)
+    return this.db.albums.find((album) => album.id === id);
   }
 }
