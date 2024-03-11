@@ -1,4 +1,4 @@
-# Home Library Service
+# 📀 Home Library Service
 
 ## Prerequisites
 
@@ -7,8 +7,20 @@
 
 ## Downloading
 
+Clone current repo
+
 ```
-git clone {repository URL}
+git clone https://github.com/VictoriaAlekseeva/nodejs2024Q1-service.git
+```
+
+## Checking the first assignment
+
+Assignment link https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/rest-service/assignment.md
+
+Switch to the task branch
+
+```
+git checkout part-1
 ```
 
 ## Installing NPM modules
@@ -17,14 +29,21 @@ git clone {repository URL}
 npm install
 ```
 
+
 ## Running application
+
+Create a .env file in the project's root folder and set the port number there. The app will run on the specified port in the .env file or on port 4000 if the port is not specified.
+
+Then run command:
 
 ```
 npm start
 ```
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
+You'll see the port in console
+
+After starting the app on port (4000 as default or from your .env file) you can open
+in your browser OpenAPI documentation by typing http://localhost:{PORT}/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
 ## Testing
@@ -35,24 +54,6 @@ To run all tests without authorization
 
 ```
 npm run test
-```
-
-To run only one of all test suites
-
-```
-npm run test -- <path to suite>
-```
-
-To run all test with authorization
-
-```
-npm run test:auth
-```
-
-To run only specific test suite with authorization
-
-```
-npm run test:auth -- <path to suite>
 ```
 
 ### Auto-fix and format
