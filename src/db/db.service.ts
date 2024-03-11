@@ -3,8 +3,9 @@ import { UserEntity } from '../user/entities/user.entity';
 import { ArtistEntity } from '../artist/entities/artist.entity';
 import { TrackEntity } from '../track/entities/track.entity';
 import { AlbumEntity } from '../album/entities/album.entity';
+import { FavoritesEntity } from '../favorites/entities/favorite.entity';
 
-export const enum DbEntities {
+export enum DbEntities {
   Users = 'users',
   Tracks = 'tracks',
   Artists = 'artists',
@@ -17,4 +18,9 @@ export class DbService {
   artists: ArtistEntity[] = [];
   tracks: TrackEntity[] = [];
   albums: AlbumEntity[] = [];
+  favorites: FavoritesEntity = {
+    artists: [],
+    albums: [],
+    tracks: []
+  }
 }

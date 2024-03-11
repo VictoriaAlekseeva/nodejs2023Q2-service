@@ -65,6 +65,7 @@ export class AlbumService {
     })
 
     this.db.albums.splice(albumIndex, 1);
+    this.db.favorites.albums = this.db.favorites.albums.filter(albumID => albumID !== id)
   }
 
   isAlbumExists(param: 'id' | 'name', value: string) {

@@ -66,6 +66,7 @@ export class ArtistService {
     })
 
     this.db.artists.splice(artistIndex, 1);
+    this.db.favorites.artists = this.db.favorites.artists.filter(artistID => artistID !== id)
 
   }
 

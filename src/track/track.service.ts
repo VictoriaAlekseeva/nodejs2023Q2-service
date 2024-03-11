@@ -61,7 +61,8 @@ export class TrackService {
       throw new HttpException("Track doesn't exist", HttpStatus.NOT_FOUND);
     }
 
-    this.db.tracks.splice(trackIndex, 1)
+    this.db.tracks.splice(trackIndex, 1);
+    this.db.favorites.tracks = this.db.favorites.tracks.filter(trackID => trackID !== id)
   }
 
   isTrackExists(param: 'id' | 'name', value: string) {
