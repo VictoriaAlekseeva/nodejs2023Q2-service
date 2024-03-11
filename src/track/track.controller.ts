@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, HttpCode, ParseUUIDPipe, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+  HttpCode,
+  ParseUUIDPipe,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { TrackService } from './track.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
@@ -19,19 +31,22 @@ export class TrackController {
   }
 
   @Get(':id')
-  findOne(@Param('id', new ParseUUIDPipe({version: '4'}))id: string) {
+  findOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.trackService.findOne(id);
   }
 
   @Put(':id')
   @UsePipes(new ValidationPipe())
-  update(@Param('id', new ParseUUIDPipe({version: '4'}))id: string, @Body() updateTrackDto: UpdateTrackDto) {
+  update(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Body() updateTrackDto: UpdateTrackDto,
+  ) {
     return this.trackService.update(id, updateTrackDto);
   }
 
   @Delete(':id')
   @HttpCode(StatusCodes.NO_CONTENT)
-  remove(@Param('id', new ParseUUIDPipe({version: '4'})) id: string) {
+  remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.trackService.remove(id);
   }
 }

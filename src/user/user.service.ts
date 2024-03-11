@@ -2,15 +2,14 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { User, UserEntity } from './entities/user.entity';
+import { UserEntity } from './entities/user.entity';
 import { DbService } from '../db/db.service';
 
 @Injectable()
 export class UserService {
-  constructor(private db: DbService) { }
+  constructor(private db: DbService) {}
 
   create(createUserDto: CreateUserDto) {
-
     const { login, password } = createUserDto;
 
     if (this.isUserExists('login', login)) {
@@ -25,10 +24,10 @@ export class UserService {
       password,
       version: 1,
       createdAt: currentDate,
-      updatedAt: currentDate
-    })
+      updatedAt: currentDate,
+    });
 
-    this.db.users.push(user)
+    this.db.users.push(user);
 
     return user;
   }
@@ -55,27 +54,26 @@ export class UserService {
     }
 
     if (user.password !== oldPassword) {
-      throw new HttpException("Incorrect password", HttpStatus.FORBIDDEN);
+      throw new HttpException('Incorrect password', HttpStatus.FORBIDDEN);
     }
 
     user.password = newPassword;
     user.updatedAt = Date.now();
-    user.version +=1;
+    user.version += 1;
     return user;
-
   }
 
   remove(id: string) {
-    const userIndex = this.db.users.findIndex(user => user.id === id);
+    const userIndex = this.db.users.findIndex((user) => user.id === id);
 
     if (userIndex === -1) {
       throw new HttpException("User doesn't exist", HttpStatus.NOT_FOUND);
     }
 
-    this.db.users.splice(userIndex, 1)
+    this.db.users.splice(userIndex, 1);
   }
 
   isUserExists(param: 'id' | 'login', value: string) {
-    return this.db.users.find(user => user[param] === value);
+    return this.db.users.find((user) => user[param] === value);
   }
 }

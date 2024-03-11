@@ -1,4 +1,4 @@
-import { Exclude } from "class-transformer";
+import { Exclude } from 'class-transformer';
 
 export interface User {
   id: string; // uuid v4
@@ -10,7 +10,6 @@ export interface User {
 }
 
 export class UserEntity implements User {
-
   id: string;
   login: string;
 
@@ -28,5 +27,4 @@ export class UserEntity implements User {
     this.createdAt = userData.createdAt;
     this.updatedAt = userData.updatedAt;
   }
-
 }

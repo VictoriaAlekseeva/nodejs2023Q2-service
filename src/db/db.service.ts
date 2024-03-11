@@ -9,7 +9,7 @@ export enum DbEntities {
   Users = 'users',
   Tracks = 'tracks',
   Artists = 'artists',
-  Albums = 'albums'
+  Albums = 'albums',
 }
 
 @Injectable()
@@ -21,6 +21,6 @@ export class DbService {
   favorites: FavoritesEntity = {
     artists: [],
     albums: [],
-    tracks: []
-  }
+    tracks: [],
+  };
 }

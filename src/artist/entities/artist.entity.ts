@@ -5,7 +5,6 @@ export interface Artist {
 }
 
 export class ArtistEntity implements Artist {
-
   id: string; // uuid v4
   name: string;
   grammy: boolean;
@@ -15,5 +14,4 @@ export class ArtistEntity implements Artist {
     this.name = artistData.name;
     this.grammy = artistData.grammy;
   }
-
 }

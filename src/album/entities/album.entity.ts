@@ -15,6 +15,6 @@ export class AlbumEntity implements Album {
     this.id = albumData.id;
     this.name = albumData.name;
     this.year = albumData.year;
-    this.artistId = this.artistId? null : albumData.artistId;
+    this.artistId = this.artistId ? null : albumData.artistId;
   }
 }

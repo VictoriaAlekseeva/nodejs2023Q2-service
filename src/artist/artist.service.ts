@@ -7,7 +7,7 @@ import { ArtistEntity } from './entities/artist.entity';
 
 @Injectable()
 export class ArtistService {
-  constructor(private db: DbService) { }
+  constructor(private db: DbService) {}
 
   create(createArtistDto: CreateArtistDto) {
     const { name, grammy } = createArtistDto;
@@ -17,7 +17,7 @@ export class ArtistService {
       id,
       name,
       grammy,
-    })
+    });
 
     this.db.artists.push(artist);
 
@@ -51,26 +51,27 @@ export class ArtistService {
   }
 
   remove(id: string) {
-    const artistIndex = this.db.artists.findIndex(artist => artist.id === id);
+    const artistIndex = this.db.artists.findIndex((artist) => artist.id === id);
 
     if (artistIndex === -1) {
       throw new HttpException("Artist doesn't exist", HttpStatus.NOT_FOUND);
     }
 
-    this.db.tracks.map(track => {
-      if (track.artistId === id) track.artistId = null
-    })
+    this.db.tracks.map((track) => {
+      if (track.artistId === id) track.artistId = null;
+    });
 
-    this.db.albums.map(album => {
-      if (album.artistId === id) album.artistId = null
-    })
+    this.db.albums.map((album) => {
+      if (album.artistId === id) album.artistId = null;
+    });
 
     this.db.artists.splice(artistIndex, 1);
-    this.db.favorites.artists = this.db.favorites.artists.filter(artistID => artistID !== id)
-
+    this.db.favorites.artists = this.db.favorites.artists.filter(
+      (artistID) => artistID !== id,
+    );
   }
 
   isArtistExists(param: 'id' | 'name', value: string) {
-    return this.db.artists.find(artist => artist[param] === value);
+    return this.db.artists.find((artist) => artist[param] === value);
   }
 }

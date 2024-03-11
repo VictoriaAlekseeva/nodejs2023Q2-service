@@ -7,7 +7,7 @@ import { TrackEntity } from './entities/track.entity';
 
 @Injectable()
 export class TrackService {
-  constructor(private db: DbService) { }
+  constructor(private db: DbService) {}
 
   create(createTrackDto: CreateTrackDto) {
     // const { name, artistId, albumId, duration } = createTrackDto;
@@ -16,7 +16,7 @@ export class TrackService {
 
     const track = new TrackEntity({
       id,
-      ...createTrackDto
+      ...createTrackDto,
     });
 
     this.db.tracks.push(track);
@@ -55,17 +55,19 @@ export class TrackService {
   }
 
   remove(id: string) {
-    const trackIndex = this.db.tracks.findIndex(track => track.id === id);
+    const trackIndex = this.db.tracks.findIndex((track) => track.id === id);
 
     if (trackIndex === -1) {
       throw new HttpException("Track doesn't exist", HttpStatus.NOT_FOUND);
     }
 
     this.db.tracks.splice(trackIndex, 1);
-    this.db.favorites.tracks = this.db.favorites.tracks.filter(trackID => trackID !== id)
+    this.db.favorites.tracks = this.db.favorites.tracks.filter(
+      (trackID) => trackID !== id,
+    );
   }
 
   isTrackExists(param: 'id' | 'name', value: string) {
-    return this.db.tracks.find(track => track[param] === value);
+    return this.db.tracks.find((track) => track[param] === value);
   }
 }

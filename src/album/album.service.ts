@@ -7,7 +7,7 @@ import { AlbumEntity } from './entities/album.entity';
 
 @Injectable()
 export class AlbumService {
-  constructor(private db: DbService) { }
+  constructor(private db: DbService) {}
 
   create(createAlbumDto: CreateAlbumDto) {
     const { name, year, artistId } = createAlbumDto;
@@ -18,7 +18,7 @@ export class AlbumService {
       name,
       year,
       artistId,
-    })
+    });
 
     this.db.albums.push(album);
 
@@ -54,21 +54,23 @@ export class AlbumService {
   }
 
   remove(id: string) {
-    const albumIndex = this.db.albums.findIndex(album => album.id === id);
+    const albumIndex = this.db.albums.findIndex((album) => album.id === id);
 
     if (albumIndex === -1) {
       throw new HttpException("Album doesn't exist", HttpStatus.NOT_FOUND);
     }
 
-    this.db.tracks.map(track => {
-      if (track.albumId === id) track.albumId = null
-    })
+    this.db.tracks.map((track) => {
+      if (track.albumId === id) track.albumId = null;
+    });
 
     this.db.albums.splice(albumIndex, 1);
-    this.db.favorites.albums = this.db.favorites.albums.filter(albumID => albumID !== id)
+    this.db.favorites.albums = this.db.favorites.albums.filter(
+      (albumID) => albumID !== id,
+    );
   }
 
   isAlbumExists(param: 'id' | 'name', value: string) {
-    return this.db.albums.find(album => album[param] === value);
+    return this.db.albums.find((album) => album[param] === value);
   }
 }
