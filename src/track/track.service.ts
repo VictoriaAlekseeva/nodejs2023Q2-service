@@ -29,7 +29,7 @@ export class TrackService {
   }
 
   async update(id: string, updateTrackDto: UpdateTrackDto) {
-    await this.findOne(id)
+    await this.findOne(id);
     const updateTrack = await this.db.track.update({
       where: { id },
       data: updateTrackDto,

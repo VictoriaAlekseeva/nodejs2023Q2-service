@@ -29,7 +29,7 @@ export class ArtistService {
   }
 
   async update(id: string, updateArtistDto: UpdateArtistDto) {
-    await this.findOne(id)
+    await this.findOne(id);
     const updateArtist = await this.db.artist.update({
       where: { id },
       data: updateArtistDto,

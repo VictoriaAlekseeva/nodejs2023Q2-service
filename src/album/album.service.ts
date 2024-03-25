@@ -27,7 +27,6 @@ export class AlbumService {
   }
 
   async update(id: string, updateAlbumDto: UpdateAlbumDto) {
-
     await this.findOne(id);
 
     const updateAlbum = await this.db.album.update({
