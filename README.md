@@ -17,7 +17,7 @@ git clone https://github.com/VictoriaAlekseeva/nodejs2024Q1-service.git
 
 Assignment link https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/containerization-database-orm/assignment.md
 
-Switch to the task branch
+Switch to the task branch part-2
 
 ```
 git checkout part-2

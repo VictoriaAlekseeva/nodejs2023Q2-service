@@ -6,9 +6,7 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { v4 as uuidv4 } from 'uuid';
 import { UserTransformEntity } from './entities/userTransform.entity';
-import { DbService } from '../db/db.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -16,7 +14,6 @@ export class UserService {
   constructor(private db: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
-
     const newUser = await this.db.user.create({ data: createUserDto });
 
     return new UserTransformEntity(newUser);
@@ -49,7 +46,7 @@ export class UserService {
       throw new HttpException("'Incorrect password'", HttpStatus.FORBIDDEN);
     }
 
-    const updatedUser =  await this.db.user.update({
+    const updatedUser = await this.db.user.update({
       where: { id },
       data: {
         password: newPassword,
@@ -57,7 +54,7 @@ export class UserService {
       },
     });
 
-    return new UserTransformEntity(updatedUser)
+    return new UserTransformEntity(updatedUser);
   }
 
   async remove(id: string) {

@@ -1,7 +1,6 @@
 import { Track } from '@prisma/client';
 
 export class TrackTransformEntity {
-
   id: string; // uuid v4
   name: string;
   artistId: string | null; // refers to Artist
@@ -13,6 +12,6 @@ export class TrackTransformEntity {
     this.name = trackData.name;
     this.artistId = trackData.artistId;
     this.albumId = trackData.albumId;
-    this.duration = trackData.duration
+    this.duration = trackData.duration;
   }
 }

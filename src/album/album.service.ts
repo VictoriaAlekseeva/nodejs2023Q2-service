@@ -1,88 +1,46 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { v4 as uuidv4 } from 'uuid';
-import { DbService } from '../db/db.service';
-import { AlbumEntity } from './entities/album.entity';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { AlbumTransformEntity } from './entities/albumTransform.entity';
 
 @Injectable()
 export class AlbumService {
-  constructor(private db: DbService) {}
+  constructor(private db: PrismaService) {}
 
-  create(createAlbumDto: CreateAlbumDto) {
-    const { name, year, artistId } = createAlbumDto;
+  async create(createAlbumDto: CreateAlbumDto) {
+    const newAlbum = await this.db.album.create({ data: createAlbumDto });
+    return newAlbum;
+  }
 
-    if (artistId && !this.isArtistExists(artistId)) {
-      throw new HttpException("Artist doesn't exist", HttpStatus.NOT_FOUND);
+  async findAll() {
+    const getAllTracks = await this.db.album.findMany();
+    return getAllTracks.map((album) => new AlbumTransformEntity(album));
+  }
+
+  async findOne(id: string) {
+    const getAlbum = await this.db.album.findUnique({ where: { id } });
+    if (!getAlbum) {
+      throw new HttpException("Album doesn't exist", HttpStatus.NOT_FOUND);
     }
+    return getAlbum;
+  }
 
-    const id = uuidv4();
-    const album = new AlbumEntity({
-      id,
-      name,
-      year,
-      artistId,
+  async update(id: string, updateAlbumDto: UpdateAlbumDto) {
+
+    await this.findOne(id);
+
+    const updateAlbum = await this.db.album.update({
+      where: { id },
+      data: updateAlbumDto,
     });
 
-    this.db.albums.push(album);
-
-    return album;
+    return updateAlbum;
   }
 
-  findAll() {
-    return this.db.albums;
-  }
+  async remove(id: string) {
+    await this.findOne(id);
 
-  findOne(id: string) {
-    const album = this.isAlbumExists('id', id);
-    if (!album) {
-      throw new HttpException("Album doesn't exist", HttpStatus.NOT_FOUND);
-    }
-    return album;
-  }
-
-  update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    const { name, year, artistId } = updateAlbumDto;
-
-    const album = this.isAlbumExists('id', id);
-
-    if (artistId && !this.isArtistExists(artistId)) {
-      throw new HttpException("Artist doesn't exist", HttpStatus.NOT_FOUND);
-    }
-
-    if (!album) {
-      throw new HttpException("Album doesn't exist", HttpStatus.NOT_FOUND);
-    }
-
-    album.name = name;
-    album.year = year;
-    album.artistId = artistId;
-
-    return album;
-  }
-
-  remove(id: string) {
-    const albumIndex = this.db.albums.findIndex((album) => album.id === id);
-
-    if (albumIndex === -1) {
-      throw new HttpException("Album doesn't exist", HttpStatus.NOT_FOUND);
-    }
-
-    this.db.tracks.map((track) => {
-      if (track.albumId === id) track.albumId = null;
-    });
-
-    this.db.albums.splice(albumIndex, 1);
-    this.db.favorites.albums = this.db.favorites.albums.filter(
-      (albumID) => albumID !== id,
-    );
-  }
-
-  isAlbumExists(param: 'id' | 'name', value: string) {
-    return this.db.albums.find((album) => album[param] === value);
-  }
-
-  isArtistExists(id: string) {
-    return this.db.artists.find((artist) => artist.id === id);
+    await this.db.album.delete({ where: { id } });
   }
 }

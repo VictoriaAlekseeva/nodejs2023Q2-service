@@ -1,9 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import { v4 as uuidv4 } from 'uuid';
-import { DbService } from '../db/db.service';
-import { TrackEntity } from './entities/track.entity';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TrackTransformEntity } from './entities/trackTransform.entity';
 
@@ -12,9 +9,9 @@ export class TrackService {
   constructor(private db: PrismaService) {}
 
   async create(createTrackDto: CreateTrackDto) {
-    const newTrack = await this.db.track.create({ data: createTrackDto })
+    const newTrack = await this.db.track.create({ data: createTrackDto });
 
-    return newTrack
+    return newTrack;
   }
 
   async findAll() {
@@ -23,30 +20,26 @@ export class TrackService {
   }
 
   async findOne(id: string) {
-    const getTrack = await this.db.track.findUnique({where: {id}})
+    const getTrack = await this.db.track.findUnique({ where: { id } });
     if (!getTrack) {
       throw new HttpException("Track doesn't exist", HttpStatus.NOT_FOUND);
     }
 
-    return new TrackTransformEntity(getTrack)
+    return new TrackTransformEntity(getTrack);
   }
 
   async update(id: string, updateTrackDto: UpdateTrackDto) {
-
-    const track = await this.findOne(id);
-
-    const updateTrack =  await this.db.track.update({
+    const updateTrack = await this.db.track.update({
       where: { id },
       data: updateTrackDto,
     });
 
-    return updateTrack
+    return updateTrack;
   }
 
   async remove(id: string) {
-
     await this.findOne(id);
 
-    await this.db.track.delete({where: {id}})
+    await this.db.track.delete({ where: { id } });
   }
 }
