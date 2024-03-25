@@ -14,7 +14,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "start:migrate": "npx prisma migrate deploy && npm run start:dev",
-    "docker:studio": "docker exec -it appication npx prisma studio",
+    "docker:studio": "docker exec -it application npx prisma studio",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
     "docker:scan": "docker scout cves viktoriiaalekseeva/application:latest && docker scout cves viktoriiaalekseeva/database:latest",

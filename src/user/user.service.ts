@@ -16,15 +16,6 @@ export class UserService {
   constructor(private db: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
-    // const { login, password } = createUserDto;
-
-    // const userExists = await this.db.user.findUnique({
-    //   where: { login },
-    // });
-
-    // if (userExists) {
-    //   throw new HttpException('User already exists', HttpStatus.CONFLICT);
-    // }
 
     const newUser = await this.db.user.create({ data: createUserDto });
 
@@ -55,30 +46,23 @@ export class UserService {
     }
 
     if (userToUpdate.password !== oldPassword) {
-      throw new Error('Incorrect password');
+      throw new HttpException("'Incorrect password'", HttpStatus.FORBIDDEN);
     }
 
-    return await this.db.user.update({
+    const updatedUser =  await this.db.user.update({
       where: { id },
       data: {
         password: newPassword,
-        updatedAt: new Date(),
+        // updatedAt: new Date(),
         version: userToUpdate.version + 1,
       },
     });
+
+    return new UserTransformEntity(updatedUser)
   }
 
   async remove(id: string) {
-    const userToRemove = await this.db.user.findUnique({ where: { id } });
-
-    if (!userToRemove) {
-      throw new HttpException("User doesn't exist", HttpStatus.NOT_FOUND);
-    }
-
-    this.db.user.delete({ where: { id } });
+    await this.findOne(id);
+    await this.db.user.delete({ where: { id } });
   }
-
-  // isUserExists(param: 'id' | 'login', value: string) {
-  //   return this.db.users.find((user) => user[param] === value);
-  // }
 }
