@@ -1,0 +1,39 @@
+services:
+  application:
+    build: .
+    image: viktoriiaalekseeva/application:latest
+    container_name: 'application'
+    ports:
+      - '$PRISMA_PORT:$PRISMA_PORT'
+      - '$PORT:$PORT'
+    depends_on:
+      - database
+    restart: always
+    networks:
+      - internalNetwork
+    env_file:
+      - .env
+    volumes:
+      - ./src:/usr/app/src
+
+  database:
+    build: ./database/
+    image: viktoriiaalekseeva/database:latest
+    ports:
+      - '$DB_PORT:$DB_PORT'
+    container_name: postgres-db
+    restart: always
+    volumes:
+      - db_storage_data:/var/lib/postgresql/data
+    networks:
+      - internalNetwork
+    env_file:
+      - .env
+    command: postgres -c port=$DB_PORT -c logging_collector=on -c log_statement=all
+
+volumes:
+  db_storage_data:
+networks:
+  internalNetwork:
+    driver: bridge
+    name: 'internalNetwork'

@@ -83,7 +83,6 @@ export class AlbumService {
   }
 
   isArtistExists(id: string) {
-
     return this.db.artists.find((artist) => artist.id === id);
   }
 }

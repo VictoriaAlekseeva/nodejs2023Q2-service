@@ -13,14 +13,14 @@ Clone current repo
 git clone https://github.com/VictoriaAlekseeva/nodejs2024Q1-service.git
 ```
 
-## Checking the first assignment
+## Checking the second assignment
 
-Assignment link https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/rest-service/assignment.md
+Assignment link https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/containerization-database-orm/assignment.md
 
 Switch to the task branch
 
 ```
-git checkout part-1
+git checkout part-2
 ```
 
 ## Installing NPM modules
@@ -32,19 +32,24 @@ npm install
 
 ## Running application
 
-Create a .env file in the project's root folder and set the port number there. The app will run on the specified port in the .env file or on port 4000 if the port is not specified.
+<!-- Create a .env file in the project's root folder and set the port number there. The app will run on the specified port in the .env file or on port 4000 if the port is not specified. -->
 
-Then run command:
+Rename .env.example to .env
+
+<!-- Then run command:
 
 ```
 npm start
-```
+``` -->
 
-You'll see the port in console
+<!-- You'll see the port in console
 
 After starting the app on port (4000 as default or from your .env file) you can open
 in your browser OpenAPI documentation by typing http://localhost:{PORT}/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+For more information about OpenAPI/Swagger please visit https://swagger.io/. -->
+
+run
+npm run docker-compose up
 
 ## Testing
 
@@ -66,8 +71,8 @@ npm run lint
 npm run format
 ```
 
-### Debugging in VSCode
+<!-- ### Debugging in VSCode
 
 Press <kbd>F5</kbd> to debug.
 
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+For more information, visit: https://code.visualstudio.com/docs/editor/debugging -->

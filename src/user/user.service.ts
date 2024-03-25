@@ -1,79 +1,84 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { UserEntity } from './entities/user.entity';
+import { UserTransformEntity } from './entities/userTransform.entity';
 import { DbService } from '../db/db.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UserService {
-  constructor(private db: DbService) {}
+  constructor(private db: PrismaService) {}
 
-  create(createUserDto: CreateUserDto) {
-    const { login, password } = createUserDto;
+  async create(createUserDto: CreateUserDto) {
+    // const { login, password } = createUserDto;
 
-    if (this.isUserExists('login', login)) {
-      throw new HttpException('Login is occupied', HttpStatus.CONFLICT);
+    // const userExists = await this.db.user.findUnique({
+    //   where: { login },
+    // });
+
+    // if (userExists) {
+    //   throw new HttpException('User already exists', HttpStatus.CONFLICT);
+    // }
+
+    const newUser = await this.db.user.create({ data: createUserDto });
+
+    return new UserTransformEntity(newUser);
+  }
+
+  async findAll() {
+    const getAllUsers = await this.db.user.findMany();
+    return getAllUsers.map((user) => new UserTransformEntity(user));
+  }
+
+  async findOne(id: string) {
+    const getUser = await this.db.user.findUnique({ where: { id } });
+
+    if (!getUser) {
+      throw new NotFoundException("User doesn't exist");
     }
-
-    const id = uuidv4();
-    const currentDate = Date.now();
-    const user = new UserEntity({
-      id,
-      login,
-      password,
-      version: 1,
-      createdAt: currentDate,
-      updatedAt: currentDate,
-    });
-
-    this.db.users.push(user);
-
-    return user;
+    return new UserTransformEntity(getUser);
   }
 
-  findAll() {
-    return this.db.users;
-  }
-
-  findOne(id: string) {
-    const user = this.isUserExists('id', id);
-    if (!user) {
-      throw new HttpException("User doesn't exist", HttpStatus.NOT_FOUND);
-    }
-    return user;
-  }
-
-  update(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto) {
     const { oldPassword, newPassword } = updateUserDto;
 
-    const user = this.isUserExists('id', id);
+    const userToUpdate = await this.db.user.findUnique({ where: { id } });
 
-    if (!user) {
+    if (!userToUpdate) {
       throw new HttpException("User doesn't exist", HttpStatus.NOT_FOUND);
     }
 
-    if (user.password !== oldPassword) {
-      throw new HttpException('Incorrect password', HttpStatus.FORBIDDEN);
+    if (userToUpdate.password !== oldPassword) {
+      throw new Error('Incorrect password');
     }
 
-    user.password = newPassword;
-    user.updatedAt = Date.now();
-    user.version += 1;
-    return user;
+    return await this.db.user.update({
+      where: { id },
+      data: {
+        password: newPassword,
+        updatedAt: new Date(),
+        version: userToUpdate.version + 1,
+      },
+    });
   }
 
-  remove(id: string) {
-    const userIndex = this.db.users.findIndex((user) => user.id === id);
+  async remove(id: string) {
+    const userToRemove = await this.db.user.findUnique({ where: { id } });
 
-    if (userIndex === -1) {
+    if (!userToRemove) {
       throw new HttpException("User doesn't exist", HttpStatus.NOT_FOUND);
     }
 
-    this.db.users.splice(userIndex, 1);
+    this.db.user.delete({ where: { id } });
   }
 
-  isUserExists(param: 'id' | 'login', value: string) {
-    return this.db.users.find((user) => user[param] === value);
-  }
+  // isUserExists(param: 'id' | 'login', value: string) {
+  //   return this.db.users.find((user) => user[param] === value);
+  // }
 }
