@@ -1,77 +1,46 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import { v4 as uuidv4 } from 'uuid';
-import { DbService } from '../db/db.service';
-import { ArtistEntity } from './entities/artist.entity';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { ArtistTransformEntity } from './entities/artistTransform.entity';
 
 @Injectable()
 export class ArtistService {
-  constructor(private db: DbService) {}
+  constructor(private db: PrismaService) {}
 
-  create(createArtistDto: CreateArtistDto) {
-    const { name, grammy } = createArtistDto;
+  async create(createArtistDto: CreateArtistDto) {
+    const newArtist = await this.db.artist.create({ data: createArtistDto });
 
-    const id = uuidv4();
-    const artist = new ArtistEntity({
-      id,
-      name,
-      grammy,
-    });
-
-    this.db.artists.push(artist);
-
-    return artist;
+    return newArtist;
   }
 
-  findAll() {
-    return this.db.artists;
+  async findAll() {
+    const getAllArtists = await this.db.artist.findMany();
+    return getAllArtists.map((artist) => new ArtistTransformEntity(artist));
   }
 
-  findOne(id: string) {
-    const artist = this.isArtistExists('id', id);
-    if (!artist) {
-      throw new HttpException("Artist doesn't exist", HttpStatus.NOT_FOUND);
-    }
-    return artist;
-  }
-
-  update(id: string, updateArtistDto: UpdateArtistDto) {
-    const { name, grammy } = updateArtistDto;
-
-    const artist = this.isArtistExists('id', id);
-
-    if (!artist) {
-      throw new HttpException("Artist doesn't exist", HttpStatus.NOT_FOUND);
+  async findOne(id: string) {
+    const getArtist = await this.db.artist.findUnique({ where: { id } });
+    if (!getArtist) {
+      throw new HttpException("Track doesn't exist", HttpStatus.NOT_FOUND);
     }
 
-    artist.name = name;
-    artist.grammy = grammy;
-    return artist;
+    return new ArtistTransformEntity(getArtist);
   }
 
-  remove(id: string) {
-    const artistIndex = this.db.artists.findIndex((artist) => artist.id === id);
-
-    if (artistIndex === -1) {
-      throw new HttpException("Artist doesn't exist", HttpStatus.NOT_FOUND);
-    }
-
-    this.db.tracks.map((track) => {
-      if (track.artistId === id) track.artistId = null;
+  async update(id: string, updateArtistDto: UpdateArtistDto) {
+    await this.findOne(id)
+    const updateArtist = await this.db.artist.update({
+      where: { id },
+      data: updateArtistDto,
     });
 
-    this.db.albums.map((album) => {
-      if (album.artistId === id) album.artistId = null;
-    });
-
-    this.db.artists.splice(artistIndex, 1);
-    this.db.favorites.artists = this.db.favorites.artists.filter(
-      (artistID) => artistID !== id,
-    );
+    return updateArtist;
   }
 
-  isArtistExists(param: 'id' | 'name', value: string) {
-    return this.db.artists.find((artist) => artist[param] === value);
+  async remove(id: string) {
+    await this.findOne(id);
+
+    await this.db.artist.delete({ where: { id } });
   }
 }
