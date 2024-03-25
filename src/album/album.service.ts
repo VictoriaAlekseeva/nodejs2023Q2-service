@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AlbumTransformEntity } from './entities/albumTransform.entity';
 
 @Injectable()
 export class AlbumService {
@@ -14,8 +13,7 @@ export class AlbumService {
   }
 
   async findAll() {
-    const getAllTracks = await this.db.album.findMany();
-    return getAllTracks.map((album) => new AlbumTransformEntity(album));
+    return await this.db.album.findMany();
   }
 
   async findOne(id: string) {

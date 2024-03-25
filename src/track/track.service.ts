@@ -15,8 +15,7 @@ export class TrackService {
   }
 
   async findAll() {
-    const getAllTracks = await this.db.track.findMany();
-    return getAllTracks.map((track) => new TrackTransformEntity(track));
+    return await this.db.track.findMany();
   }
 
   async findOne(id: string) {

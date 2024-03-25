@@ -1,115 +1,171 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { DbEntities, DbService } from '../db/db.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class FavoritesService {
-  constructor(private db: DbService) {}
+  constructor(private db: PrismaService) { }
 
-  addTrack(id: string) {
-    if (!this.isEntityExists(id, DbEntities.Tracks)) {
-      throw new HttpException(
-        "Track doesn't exist",
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+  async addTrack(id: string) {
+
+    const track = await this.db.track.findUnique({ where: { id } });
+
+    if (!track) {
+      throw new HttpException("Album doesn't exist", HttpStatus.NOT_FOUND);
     }
 
-    this.db.favorites.tracks.push(id);
-  }
+    const findFav = await this.db.favorite.findFirst();
 
-  addAlbum(id: string) {
-    if (!this.isEntityExists(id, DbEntities.Albums)) {
-      throw new HttpException(
-        "Album doesn't exist",
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
-
-    this.db.favorites.albums.push(id);
-  }
-
-  addArtist(id: string) {
-    if (!this.isEntityExists(id, DbEntities.Artists)) {
-      throw new HttpException(
-        "Artist doesn't exist",
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
-
-    this.db.favorites.artists.push(id);
-  }
-
-  findAll() {
-    const favEntries = Object.entries(this.db.favorites);
-    const resp = favEntries.reduce((acc, [key, value]) => {
-      acc[key] = value.map((itemId) => {
-        return this.db[key].find((entity) => entity.id === itemId);
+    if (!findFav) {
+      await this.db.favorite.create({
+        data: {
+          tracks: [id],
+        },
       });
-
-      return acc;
-    }, {});
-
-    return resp;
-  }
-
-  deleteTrack(id: string) {
-    const deleteIndex = this.isEntityInFavs(id, DbEntities.Tracks);
-    if (deleteIndex === -1) {
-      throw new HttpException(
-        "Track doesn't exist",
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
-
-    this.db.favorites.tracks.splice(deleteIndex, 1);
-  }
-
-  deleteAlbum(id: string) {
-    const deleteIndex = this.isEntityInFavs(id, DbEntities.Albums);
-    if (deleteIndex === -1) {
-      throw new HttpException(
-        "Album doesn't exist",
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
-
-    this.db.favorites.albums.splice(deleteIndex, 1);
-  }
-
-  deleteArtist(id: string) {
-    const deleteIndex = this.isEntityInFavs(id, DbEntities.Artists);
-    if (deleteIndex === -1) {
-      throw new HttpException(
-        "Artist doesn't exist",
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
-
-    this.db.favorites.artists.splice(deleteIndex, 1);
-  }
-
-  isEntityExists(id: string, entity: DbEntities) {
-    switch (entity) {
-      case DbEntities.Tracks:
-        return this.db.tracks.find((item) => item.id === id);
-      case DbEntities.Albums:
-        return this.db.albums.find((item) => item.id === id);
-      case DbEntities.Artists:
-        return this.db.artists.find((item) => item.id === id);
-      default:
-        return null;
+    } else {
+      const checkTracks = findFav.tracks.includes(id);
+      if (!checkTracks) {
+        await this.db.favorite.update({
+          where: { favoriteId: findFav.favoriteId },
+          data: { tracks: { set: [...findFav.tracks, id] } },
+        });
+      } else {
+        throw new HttpException(`Track is already exist in favorites`,
+          HttpStatus.UNPROCESSABLE_ENTITY);
+      }
     }
   }
 
-  isEntityInFavs(id: string, entity: DbEntities) {
-    switch (entity) {
-      case DbEntities.Tracks:
-        return this.db.favorites.tracks.findIndex((item) => item === id);
-      case DbEntities.Albums:
-        return this.db.favorites.albums.findIndex((item) => item === id);
-      case DbEntities.Artists:
-        return this.db.favorites.artists.findIndex((item) => item === id);
-      default:
-        return null;
+  async addAlbum(id: string) {
+    const album = await this.db.album.findUnique({ where: { id } });
+
+    if (!album) {
+      throw new HttpException("Album doesn't exist", HttpStatus.NOT_FOUND);
+    }
+
+    const findFav = await this.db.favorite.findFirst();
+
+    if (!findFav) {
+      await this.db.favorite.create({
+        data: {
+          albums: [id],
+        },
+      });
+    } else {
+      const checkAlbums = findFav.albums.includes(id);
+      if (!checkAlbums) {
+        await this.db.favorite.update({
+          where: { favoriteId: findFav.favoriteId },
+          data: { albums: { set: [...findFav.albums, id] } },
+        });
+      } else {
+        throw new HttpException(`Album already exists in favorites`,
+          HttpStatus.UNPROCESSABLE_ENTITY);
+      }
     }
   }
+
+  async addArtist(id: string) {
+
+    const artist = await this.db.artist.findUnique({ where: { id } });
+
+    if (!artist) {
+      throw new HttpException("Artist doesn't exist", HttpStatus.NOT_FOUND);
+    }
+
+    const findFav = await this.db.favorite.findFirst();
+
+    if (!findFav) {
+      await this.db.favorite.create({
+        data: {
+          artists: [id],
+        },
+      });
+    } else {
+      const checkArtist = findFav.artists.includes(id);
+      if (!checkArtist) {
+        await this.db.favorite.update({
+          where: { favoriteId: findFav.favoriteId },
+          data: { artists: { set: [...findFav.artists, id] } },
+        });
+      } else {
+        throw new HttpException(`Artist already exists in favorites`, HttpStatus.UNPROCESSABLE_ENTITY);
+      }
+    }
+  }
+
+  async findAll() {
+    const findFav = await this.db.favorite.findFirst();
+    if (!findFav) return { artists: [], albums: [], tracks: [] }
+
+    const tracks = await this.db.track.findMany({
+      where: { id: { in: findFav.tracks } },
+    });
+
+    const albums = await this.db.album.findMany({
+      where: { id: { in: findFav.albums } },
+    });
+
+    const artists = await this.db.artist.findMany({
+      where: { id: { in: findFav.artists } },
+    });
+
+    const resData = { tracks, albums, artists };
+
+    return resData;
+  }
+
+  async deleteTrack(id: string) {
+    const favorite = await this.db.favorite.findFirst();
+
+    const findTrack = favorite.tracks.includes(id);
+    if (!findTrack) {
+      throw new HttpException("Track doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    await this.db.favorite.update({
+      where: { favoriteId: favorite.favoriteId },
+      data: {
+        tracks: {
+          set: favorite.tracks.filter((trackId) => trackId !== id),
+        },
+      },
+    });
+  }
+
+  async deleteAlbum(id: string) {
+    const favorite = await this.db.favorite.findFirst();
+
+    const findAlbum = favorite.albums.includes(id);
+    if (!findAlbum) {
+      throw new HttpException("Album doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    await this.db.favorite.update({
+      where: { favoriteId: favorite.favoriteId },
+      data: {
+        albums: {
+          set: favorite.albums.filter((albumId) => albumId !== id),
+        },
+      },
+    });
+  }
+
+  async deleteArtist(id: string) {
+    const favorite = await this.db.favorite.findFirst();
+
+    const findArtist = favorite.artists.includes(id);
+    if (!favorite) {
+      throw new HttpException("Artist doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    await this.db.favorite.update({
+      where: { favoriteId: favorite.favoriteId },
+      data: {
+        artists: {
+          set: favorite.artists.filter((artistId) => artistId !== id),
+        },
+      },
+    });
+  }
+
 }

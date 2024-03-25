@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ArtistTransformEntity } from './entities/artistTransform.entity';
 
 @Injectable()
 export class ArtistService {
@@ -15,8 +14,7 @@ export class ArtistService {
   }
 
   async findAll() {
-    const getAllArtists = await this.db.artist.findMany();
-    return getAllArtists.map((artist) => new ArtistTransformEntity(artist));
+    return await this.db.artist.findMany();
   }
 
   async findOne(id: string) {
@@ -25,7 +23,7 @@ export class ArtistService {
       throw new HttpException("Track doesn't exist", HttpStatus.NOT_FOUND);
     }
 
-    return new ArtistTransformEntity(getArtist);
+    return getArtist;
   }
 
   async update(id: string, updateArtistDto: UpdateArtistDto) {

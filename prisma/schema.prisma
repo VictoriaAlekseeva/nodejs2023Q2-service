@@ -30,9 +30,6 @@ model Artist {
   name    String
   albums  Album[]
   tracks  Track[]
-
-  favorites Favorite[] @relation("FavoriteToArtist")
-
 }
 
 model Album {
@@ -42,8 +39,6 @@ model Album {
   tracks   Track[]
   artistId String?
   artist   Artist?   @relation(fields: [artistId], references: [id], onDelete: SetNull)
-
-  favorites Favorite[] @relation("FavoriteToAlbum")
 
 }
 
@@ -55,13 +50,11 @@ model Track {
   albumId  String?
   artist   Artist?  @relation(fields: [artistId], references: [id], onDelete: SetNull)
   album    Album?   @relation(fields: [albumId], references: [id], onDelete: SetNull)
-
-  favorites Favorite[] @relation("FavoriteToTrack")
 }
 
 model Favorite {
   favoriteId String    @id @default(uuid())
-  artists    Artist[]  @relation("FavoriteToArtist")
-  albums     Album[]   @relation("FavoriteToAlbum")
-  tracks     Track[]   @relation("FavoriteToTrack")
+  artists    String[]
+  albums     String[]
+  tracks     String[]
 }
