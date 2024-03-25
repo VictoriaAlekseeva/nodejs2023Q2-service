@@ -53,7 +53,6 @@ export class UserService {
       where: { id },
       data: {
         password: newPassword,
-        // updatedAt: new Date(),
         version: userToUpdate.version + 1,
       },
     });
