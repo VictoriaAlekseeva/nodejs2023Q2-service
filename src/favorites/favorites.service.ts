@@ -10,7 +10,7 @@ export class FavoritesService {
     const track = await this.db.track.findUnique({ where: { id } });
 
     if (!track) {
-      throw new HttpException("Album doesn't exist", HttpStatus.NOT_FOUND);
+      throw new HttpException("Album doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     const findFav = await this.db.favorite.findFirst();
@@ -39,7 +39,7 @@ export class FavoritesService {
     const album = await this.db.album.findUnique({ where: { id } });
 
     if (!album) {
-      throw new HttpException("Album doesn't exist", HttpStatus.NOT_FOUND);
+      throw new HttpException("Album doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     const findFav = await this.db.favorite.findFirst();
@@ -69,7 +69,7 @@ export class FavoritesService {
     const artist = await this.db.artist.findUnique({ where: { id } });
 
     if (!artist) {
-      throw new HttpException("Artist doesn't exist", HttpStatus.NOT_FOUND);
+      throw new HttpException("Artist doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     const findFav = await this.db.favorite.findFirst();
@@ -154,7 +154,7 @@ export class FavoritesService {
     const favorite = await this.db.favorite.findFirst();
 
     const findArtist = favorite.artists.includes(id);
-    if (!favorite) {
+    if (!findArtist) {
       throw new HttpException("Artist doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
