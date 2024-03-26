@@ -32,24 +32,12 @@ npm install
 
 ## Running application
 
-<!-- Create a .env file in the project's root folder and set the port number there. The app will run on the specified port in the .env file or on port 4000 if the port is not specified. -->
-
 Rename .env.example to .env
 
-<!-- Then run command:
-
-```
-npm start
-``` -->
-
-<!-- You'll see the port in console
-
-After starting the app on port (4000 as default or from your .env file) you can open
-in your browser OpenAPI documentation by typing http://localhost:{PORT}/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/. -->
-
 run
+```
 npm run docker-compose up
+```
 
 ## Testing
 
@@ -71,8 +59,14 @@ npm run lint
 npm run format
 ```
 
-<!-- ### Debugging in VSCode
+### To che vulnerabilities
 
-Press <kbd>F5</kbd> to debug.
+run
+```
+npm docker:scan
+```
 
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging -->
+
+### Docker Images could be found here:
+
+https://hub.docker.com/?uuid=4E9FF780-8157-41B1-A1E4-7A67C73520F3

@@ -3,14 +3,16 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class FavoritesService {
-  constructor(private db: PrismaService) { }
+  constructor(private db: PrismaService) {}
 
   async addTrack(id: string) {
-
     const track = await this.db.track.findUnique({ where: { id } });
 
     if (!track) {
-      throw new HttpException("Album doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY);
+      throw new HttpException(
+        "Album doesn't exist",
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
 
     const findFav = await this.db.favorite.findFirst();
@@ -29,8 +31,10 @@ export class FavoritesService {
           data: { tracks: { set: [...findFav.tracks, id] } },
         });
       } else {
-        throw new HttpException(`Track is already exist in favorites`,
-          HttpStatus.UNPROCESSABLE_ENTITY);
+        throw new HttpException(
+          `Track is already exist in favorites`,
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
       }
     }
   }
@@ -39,7 +43,10 @@ export class FavoritesService {
     const album = await this.db.album.findUnique({ where: { id } });
 
     if (!album) {
-      throw new HttpException("Album doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY);
+      throw new HttpException(
+        "Album doesn't exist",
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
 
     const findFav = await this.db.favorite.findFirst();
@@ -58,18 +65,22 @@ export class FavoritesService {
           data: { albums: { set: [...findFav.albums, id] } },
         });
       } else {
-        throw new HttpException(`Album already exists in favorites`,
-          HttpStatus.UNPROCESSABLE_ENTITY);
+        throw new HttpException(
+          `Album already exists in favorites`,
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
       }
     }
   }
 
   async addArtist(id: string) {
-
     const artist = await this.db.artist.findUnique({ where: { id } });
 
     if (!artist) {
-      throw new HttpException("Artist doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY);
+      throw new HttpException(
+        "Artist doesn't exist",
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
 
     const findFav = await this.db.favorite.findFirst();
@@ -88,14 +99,17 @@ export class FavoritesService {
           data: { artists: { set: [...findFav.artists, id] } },
         });
       } else {
-        throw new HttpException(`Artist already exists in favorites`, HttpStatus.UNPROCESSABLE_ENTITY);
+        throw new HttpException(
+          `Artist already exists in favorites`,
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
       }
     }
   }
 
   async findAll() {
     const findFav = await this.db.favorite.findFirst();
-    if (!findFav) return { artists: [], albums: [], tracks: [] }
+    if (!findFav) return { artists: [], albums: [], tracks: [] };
 
     const tracks = await this.db.track.findMany({
       where: { id: { in: findFav.tracks } },
@@ -119,7 +133,10 @@ export class FavoritesService {
 
     const findTrack = favorite.tracks.includes(id);
     if (!findTrack) {
-      throw new HttpException("Track doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY);
+      throw new HttpException(
+        "Track doesn't exist",
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
 
     await this.db.favorite.update({
@@ -137,7 +154,10 @@ export class FavoritesService {
 
     const findAlbum = favorite.albums.includes(id);
     if (!findAlbum) {
-      throw new HttpException("Album doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY);
+      throw new HttpException(
+        "Album doesn't exist",
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
 
     await this.db.favorite.update({
@@ -155,7 +175,10 @@ export class FavoritesService {
 
     const findArtist = favorite.artists.includes(id);
     if (!findArtist) {
-      throw new HttpException("Artist doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY);
+      throw new HttpException(
+        "Artist doesn't exist",
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
 
     await this.db.favorite.update({
@@ -167,5 +190,4 @@ export class FavoritesService {
       },
     });
   }
-
 }
