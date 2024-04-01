@@ -1,9 +1,16 @@
-import { Body, ClassSerializerInterceptor, Controller, HttpCode, HttpStatus, Post, UnauthorizedException, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import { Public } from './routes';
 import { UpdateAuthDto } from './dto/updateAuth.dto';
-
 
 @Public()
 @Controller('auth')
@@ -33,7 +40,6 @@ export class AuthController {
     return this.authService.refresh(updateAuthDto);
   }
 }
-
 
 // Signup (auth/signup route)
 // POST auth/signup - send login and password to create a new user
