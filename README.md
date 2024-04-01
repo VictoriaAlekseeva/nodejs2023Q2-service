@@ -1,4 +1,4 @@
-# Home Library Service
+# 📀 Home Library Service
 
 ## Prerequisites
 
@@ -7,8 +7,20 @@
 
 ## Downloading
 
+Clone current repo
+
 ```
-git clone {repository URL}
+git clone https://github.com/VictoriaAlekseeva/nodejs2024Q1-service.git
+```
+
+## Checking the second assignment
+
+Assignment link https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/containerization-database-orm/assignment.md
+
+Switch to the task branch part-2
+
+```
+git checkout part-2
 ```
 
 ## Installing NPM modules
@@ -17,15 +29,15 @@ git clone {repository URL}
 npm install
 ```
 
+
 ## Running application
 
-```
-npm start
-```
+Rename .env.example to .env
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+run
+```
+npm run docker-compose up
+```
 
 ## Testing
 
@@ -35,24 +47,6 @@ To run all tests without authorization
 
 ```
 npm run test
-```
-
-To run only one of all test suites
-
-```
-npm run test -- <path to suite>
-```
-
-To run all test with authorization
-
-```
-npm run test:auth
-```
-
-To run only specific test suite with authorization
-
-```
-npm run test:auth -- <path to suite>
 ```
 
 ### Auto-fix and format
@@ -65,8 +59,14 @@ npm run lint
 npm run format
 ```
 
-### Debugging in VSCode
+### To che vulnerabilities
 
-Press <kbd>F5</kbd> to debug.
+run
+```
+npm docker:scan
+```
 
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+
+### Docker Images could be found here:
+
+https://hub.docker.com/?uuid=4E9FF780-8157-41B1-A1E4-7A67C73520F3
