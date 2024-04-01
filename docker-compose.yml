@@ -1,7 +1,7 @@
 services:
   application:
     build: .
-    image: viktoriiaalekseeva/application:latest
+    image: viktoriiaalekseeva/application:latest-auth
     container_name: 'application'
     ports:
       - '$PRISMA_PORT:$PRISMA_PORT'

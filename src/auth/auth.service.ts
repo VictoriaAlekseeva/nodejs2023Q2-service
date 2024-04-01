@@ -1,9 +1,10 @@
-import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import 'dotenv/config';
+import { UpdateAuthDto } from './dto/updateAuth.dto';
 
 interface Payload {
   userId: string,
@@ -55,7 +56,7 @@ export class AuthService {
 
     const payload = { userId: user.id, login: user.login };
 
-    const userTokens = this.createTokens(payload)
+    const userTokens = await this.createTokens(payload);
 
     return {
       ...payload,
@@ -65,13 +66,34 @@ export class AuthService {
 
   async signup(login: string, password: string) {
     const hashPass = await bcrypt.hash(password, this.saltOrRounds);
-    const user = await this.userService.create({ login: login, password: hashPass })
-
-    // let data = {
-    //   login,
-    //   password: hashPass
-    // }
+    const user = await this.userService.create({ login: login, password: hashPass });
 
     return user;
+  }
+
+  async refresh({refreshToken}: UpdateAuthDto) {
+
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token is required');
+    }
+
+    try {
+      const refreshTokenInfo = this.jwtService.verify(refreshToken, {
+        secret: process.env.JWT_SECRET_REFRESH_KEY,
+      });
+
+      const userInfo = {
+        userId: refreshTokenInfo.userId,
+        login: refreshTokenInfo.login
+      }
+
+      const userTokens = await this.createTokens(userInfo);
+
+      return userTokens;
+
+    } catch (error) {
+      throw new HttpException("Refresh token has expired", HttpStatus.FORBIDDEN);
+    }
+
   }
 }

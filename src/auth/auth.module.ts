@@ -10,6 +10,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth.guard';
 
 const secret = process.env.SECRET;
+const expireTime = process.env.TOKEN_EXPIRE_TIME
 
 @Module({
   imports: [
@@ -18,9 +19,13 @@ const secret = process.env.SECRET;
     JwtModule.registerAsync({
       useFactory: () => ({
         secret: secret,
-        signOptions: { expiresIn: '60s' },
+        signOptions: { expiresIn: expireTime },
       }),
     }),
+    // JwtModule.register({
+    //   secret: secret,
+    //   signOptions: { expiresIn: expireTime },
+    // }),
   ],
   controllers: [AuthController],
   providers: [
@@ -31,4 +36,4 @@ const secret = process.env.SECRET;
     }],
   exports: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule { }

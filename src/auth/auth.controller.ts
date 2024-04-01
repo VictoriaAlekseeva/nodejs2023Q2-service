@@ -1,12 +1,16 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, UnauthorizedException } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, HttpCode, HttpStatus, Post, UnauthorizedException, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
+import { Public } from './routes';
+import { UpdateAuthDto } from './dto/updateAuth.dto';
 
 
+@Public()
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @HttpCode(HttpStatus.CREATED)
   @Post('signup')
   async signup(@Body() authDto: AuthDto) {
@@ -22,12 +26,12 @@ export class AuthController {
     return await this.authService.login(login, password);
   }
 
-  // @HttpCode(HttpStatus.OK)
-  // @Post('refresh')
-  // async refresh(@Body() authDto: AuthDto) {
-  //   const { login, password } = authDto;
-  //   return this.authService.refresh(login, password);
-  // }
+  @HttpCode(HttpStatus.OK)
+  @Post('refresh')
+  async refresh(@Body() updateAuthDto: UpdateAuthDto) {
+    // const { login, password } = authDto;
+    return this.authService.refresh(updateAuthDto);
+  }
 }
 
 
