@@ -36,7 +36,6 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('refresh')
   async refresh(@Body() updateAuthDto: UpdateAuthDto) {
-    // const { login, password } = authDto;
     return this.authService.refresh(updateAuthDto);
   }
 }

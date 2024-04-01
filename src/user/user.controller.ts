@@ -23,14 +23,11 @@ import { StatusCodes } from 'http-status-codes';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // @UseInterceptors(ClassSerializerInterceptor)
   @Post()
-  // @UsePipes(new ValidationPipe())
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.userService.create(createUserDto);
   }
 
-  // @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   async findAll() {
     return await this.userService.findAll();
